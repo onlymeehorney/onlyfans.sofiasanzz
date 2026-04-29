@@ -903,7 +903,7 @@ export default function App() {
               <span className="w-1 h-1 bg-white/60 rounded-full" />
               <div className="flex items-center gap-1">
                 <Heart size={14} />
-                <span>97k</span>
+                <span>13k</span>
               </div>
             </div>
           </div>

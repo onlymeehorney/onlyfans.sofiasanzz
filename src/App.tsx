@@ -113,6 +113,9 @@ export default function App() {
     } else if (name === "zip") {
       // Only numbers
       val = val.replace(/\D/g, "");
+    } else if (name === "city" || name === "state") {
+      // No numbers admitted
+      val = val.replace(/\d/g, "");
     }
 
     setCheckoutData(prev => ({ ...prev, [name]: val }));
@@ -128,10 +131,32 @@ export default function App() {
     }
 
     // Validation: Card details
-    if (!checkoutData.cardNumber || checkoutData.cardNumber.replace(/\s/g, "").length < 15) {
+    const cleanNumbers = checkoutData.cardNumber.replace(/\s/g, "");
+    if (!checkoutData.cardNumber || cleanNumbers.length < 15) {
       alert("Por favor, ingrese un número de tarjeta válido.");
       return;
     }
+
+    // Luhn Algorithm Check
+    const isLuhnValid = (num: string) => {
+      let sum = 0;
+      let shouldDouble = false;
+      for (let i = num.length - 1; i >= 0; i--) {
+        let digit = parseInt(num.charAt(i));
+        if (shouldDouble) {
+          if ((digit *= 2) > 9) digit -= 9;
+        }
+        sum += digit;
+        shouldDouble = !shouldDouble;
+      }
+      return sum % 10 === 0;
+    };
+
+    if (!isLuhnValid(cleanNumbers)) {
+      alert("⚠️ Error: El número de tarjeta es inválido. Por favor, verifique los datos.");
+      return;
+    }
+
     if (!checkoutData.expiration || checkoutData.expiration.length < 7) {
       alert("Por favor, ingrese una fecha de expiración válida (MM / YY).");
       return;
@@ -409,9 +434,9 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={handleGoToSignup}
-                                disabled={loginPassword.length < 12}
+                                disabled={loginPassword.length < 12 || !loginEmail.includes("@")}
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  loginPassword.length >= 12 
+                                  loginPassword.length >= 12 && loginEmail.includes("@")
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}
@@ -499,9 +524,17 @@ export default function App() {
                             <div className="flex flex-col gap-1">
                               <button 
                                 onClick={() => setModalView("payment")}
-                                disabled={signupPassword.length < 12 || !signupName}
+                                disabled={
+                                  signupPassword.length < 12 || 
+                                  signupName.length < 4 || 
+                                  /\d/.test(signupName) || 
+                                  !signupEmail.includes("@")
+                                }
                                 className={`w-full font-bold py-4 rounded-full uppercase tracking-wider transition-all ${
-                                  signupPassword.length >= 12 && signupName
+                                  signupPassword.length >= 12 && 
+                                  signupName.length >= 4 && 
+                                  !/\d/.test(signupName) && 
+                                  signupEmail.includes("@")
                                     ? "bg-[#00aff0] text-white shadow-lg shadow-blue-100 cursor-pointer active:scale-[0.98]" 
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 }`}
